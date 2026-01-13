@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="مصحف إلكتروني شامل مع التلاوة، التفاسير، الترجمة، والتجويد - القرآن الكريم كاملاً">
+    <meta name="keywords" content="القرآن الكريم, مصحف, تلاوة, تفسير, تجويد, إسلام">
+    <meta property="og:title" content="القرآن الكريم - مصحف إلكتروني متكامل">
+    <meta property="og:description" content="تطبيق القرآن الكريم مع جميع الميزات المتقدمة">
+    <meta property="og:image" content="assets/icons/og-image.png">
+    <title>القرآن الكريم - المصحف الإلكتروني المتكامل</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Schema.org markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "القرآن الكريم - المصحف الإلكتروني",
+        "description": "تطبيق القرآن الكريم مع التلاوة، التفاسير، والترجمة",
+        "applicationCategory": "ReligiousApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-icon">
+                <i class="fas fa-book-quran"></i>
+            </div>
+            <p>جاري التحميل...</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Command Indicator -->
+    <div id="voice-command" class="voice-command hidden">
+        <i class="fas fa-microphone"></i>
+        <span>جاري الاستماع...</span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="logo">
+                    <i class="fas fa-book-quran"></i>
+                    القرآن الكريم
+                </h1>
+            </div>
+            
+            <div class="header-center">
+                <div class="quick-nav">
+                    <button class="nav-btn" id="prevJuz" title="الجزء السابق">
+                        <i class="fas fa-chevron-right"></i>
+                        الجزء السابق
+                    </button>
+                    <div class="current-position" id="currentPosition">
+                        <span>جاري التحميل...</span>
+                    </div>
+                    <button class="nav-btn" id="nextJuz" title="الجزء التالي">
+                        الجزء التالي
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-controls">
+                    <button class="control-btn" id="searchToggle" title="بحث">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="control-btn" id="bookmarksToggle" title="الإشارات المرجعية">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    <button class="control-btn" id="themeToggle" title="تبديل الوضع">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="control-btn" id="settingsToggle" title="الإعدادات">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="control-btn" id="voiceControl" title="التحكم الصوتي">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Overlay -->
+        <div id="searchOverlay" class="overlay hidden">
+            <div class="search-container">
+                <div class="search-header">
+                    <h2><i class="fas fa-search"></i> بحث في القرآن الكريم</h2>
+                    <button class="close-btn" id="closeSearch">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-input-group">
+                    <input type="text" 
+                           id="searchInput" 
+                           placeholder="ابحث عن آية أو كلمة..."
+                           autocomplete="off"
+                           aria-label="بحث في القرآن">
+                    <div class="search-filters">
+                        <select id="searchType">
+                            <option value="all">كل النص</option>
+                            <option value="surah">اسم السورة</option>
+                            <option value="ayah">رقم الآية</option>
+                            <option value="juz">الجزء</option>
+                        </select>
+                        <select id="searchScope">
+                            <option value="quran">القرآن كاملاً</option>
+                            <option value="current">السورة الحالية</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-list"></i> فهرس السور</h3>
+                    <button class="close-sidebar" id="closeSidebar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="sidebar-content">
+                    <!-- Quick Filters -->
+                    <div class="quick-filters">
+                        <button class="filter-btn active" data-filter="all">الكل</button>
+                        <button class="filter-btn" data-filter="meccan">مكية</button>
+                        <button class="filter-btn" data-filter="medinan">مدنية</button>
+                        <button class="filter-btn" data-filter="bookmarked">المحفوظة</button>
+                    </div>
+                    
+                    <!-- Surah List -->
+                    <div class="surah-list" id="surahList">
+                        <!-- Dynamically loaded -->
+                    </div>
+                    
+                    <!-- Memorization Progress -->
+                    <div class="memorization-progress">
+                        <h4><i class="fas fa-brain"></i> تقدم الحفظ</h4>
+                        <div class="progress-circle" id="memorizationCircle">
+                            <div class="circle-background"></div>
+                            <div class="circle-progress"></div>
+                            <div class="circle-text">0%</div>
+                        </div>
+                        <div class="progress-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">محفوظ</span>
+                                <span class="stat-value" id="memorizedCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">متبقي</span>
+                                <span class="stat-value" id="remainingCount">6236</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Quran Reader -->
+            <section class="quran-reader" id="quranReader">
+                <!-- Reader Header -->
+                <div class="reader-header">
+                    <div class="surah-info">
+                        <h2 id="currentSurahName">الفاتحة</h2>
+                        <div class="surah-meta">
+                            <span class="meta-item" id="surahNumber">سورة 1</span>
+                            <span class="meta-item" id="ayahCount">7 آيات</span>
+                            <span class="meta-item" id="revelationType">مكية</span>
+                            <span class="meta-item" id="currentJuz">الجزء 1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="reader-controls">
+                        <div class="font-controls">
+                            <button class="font-btn" id="decreaseFont" title="تصغير الخط">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span id="fontSize">24px</span>
+                            <button class="font-btn" id="increaseFont" title="تكبير الخط">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <select id="fontFamily" title="تغيير الخط">
+                                <option value="Amiri">أميري</option>
+                                <option value="Lateef">لطيف</option>
+                                <option value="'Scheherazade New'">شهرزاد</option>
+                            </select>
+                        </div>
+                        
+                        <div class="display-controls">
+                            <button class="display-btn" id="toggleTajweed" title="التجويد الملون">
+                                <i class="fas fa-palette"></i>
+                            </button>
+                            <button class="display-btn" id="toggleTranslation" title="عرض الترجمة">
+                                <i class="fas fa-language"></i>
+                            </button>
+                            <button class="display-btn" id="toggleTafsir" title="عرض التفسير">
+                                <i class="fas fa-book-open"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Indicator -->
+                <div class="reading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="readingProgress"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressText">0% مكتمل</span>
+                    </div>
+                </div>
+                
+                <!-- Ayahs Container -->
+                <div class="ayahs-container" id="ayahsContainer">
+                    <!-- Ayahs loaded dynamically -->
+                </div>
+                
+                <!-- Audio Player -->
+                <div class="audio-player">
+                    <div class="player-header">
+                        <h4><i class="fas fa-music"></i> التلاوة</h4>
+                        <div class="reciter-select">
+                            <select id="reciterSelect">
+                                <option value="abdulbasit">عبد الباسط عبد الصمد</option>
+                                <option value="hudhaifi">علي الحذيفي</option>
+                                <option value="minshawi">محمد صديق المنشاوي</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="player-controls">
+                        <button class="player-btn" id="playPauseBtn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        
+                        <div class="timeline">
+                            <span id="currentTime">00:00</span>
+                            <input type="range" 
+                                   id="seekSlider" 
+                                   min="0" 
+                                   max="100" 
+                                   value="0"
+                                   aria-label="شريط التقدم الزمني">
+                            <span id="duration">00:00</span>
+                        </div>
+                        
+                        <div class="secondary-controls">
+                            <button class="player-btn" id="repeatBtn" title="تكرار الآية">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button class="player-btn" id="speedBtn" title="سرعة التشغيل">
+                                1.0x
+                            </button>
+                            <button class="player-btn" id="downloadBtn" title="تحميل">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="player-volume">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" 
+                               id="volumeSlider" 
+                               min="0" 
+                               max="100" 
+                               value="80"
+                               aria-label="شريط التحكم في الصوت">
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="navigation-buttons">
+                    <button class="nav-btn large" id="prevPageBtn">
+                        <i class="fas fa-chevron-right"></i>
+                        الصفحة السابقة
+                    </button>
+                    <button class="nav-btn large" id="nextPageBtn">
+                        الصفحة التالية
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Panel -->
+            <aside class="right-panel" id="rightPanel">
+                <!-- Tafsir Panel -->
+                <div class="panel-section tafsir-panel" id="tafsirPanel">
+                    <div class="panel-header">
+                        <h4><i class="fas fa-book-open"></i> التفسير</h4>
+                        <select id="tafsirSelect">
+                            <option value="ibn-kathir">ابن كثير</option>
+                            <option value="jalalayn">الجلالين</option>
+                            <option value="saadi">السعدي</option>
+                        </select>
+                    </div>
+                    <div class="panel-content" id="tafsirContent">
+                        <!-- Tafsir loaded dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Translation Panel -->
+                <div class="panel-section translation-panel" id="translationPanel">
+                    <div class="panel-header">
+                        <h4><i class="fas fa-language"></i> الترجمة</h4>
+                        <select id="translationSelect">
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                            <option value="ur">اردو</option>
+                        </select>
+                    </div>
+                    <div class="panel-content" id="translationContent">
+                        <!-- Translation loaded dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Word-by-Word Panel -->
+                <div class="panel-section word-panel" id="wordPanel">
+                    <div class="panel-header">
+                        <h4><i class="fas fa-spell-check"></i> كلمة بكلمة</h4>
+                    </div>
+                    <div class="panel-content" id="wordContent">
+                        <!-- Word meanings loaded dynamically -->
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-tab active" data-tab="quran">
+                <i class="fas fa-book-quran"></i>
+                <span>المصحف</span>
+            </button>
+            <button class="nav-tab" data-tab="recitation">
+                <i class="fas fa-play-circle"></i>
+                <span>التلاوات</span>
+            </button>
+            <button class="nav-tab" data-tab="memorization">
+                <i class="fas fa-brain"></i>
+                <span>الحفظ</span>
+            </button>
+            <button class="nav-tab" data-tab="statistics">
+                <i class="fas fa-chart-bar"></i>
+                <span>الإحصاءات</span>
+            </button>
+            <button class="nav-tab" data-tab="more">
+                <i class="fas fa-ellipsis-h"></i>
+                <span>المزيد</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> الإعدادات</h2>
+                <button class="close-modal" id="closeSettings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3><i class="fas fa-eye"></i> المظهر</h3>
+                    <div class="settings-group">
+                        <label class="switch">
+                            <input type="checkbox" id="autoDarkMode">
+                            <span class="slider"></span>
+                            <span class="label">الوضع الداكن التلقائي</span>
+                        </label>
+                        
+                        <label class="switch">
+                            <input type="checkbox" id="tajweedColors">
+                            <span class="slider"></span>
+                            <span class="label">ألوان التجويد</span>
+                        </label>
+                        
+                        <div class="setting-item">
+                            <label for="lineSpacing">تباعد الأسطر:</label>
+                            <input type="range" id="lineSpacing" min="1.5" max="3" step="0.1" value="2">
+                            <span id="lineSpacingValue">2</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3><i class="fas fa-volume-up"></i> الصوت</h3>
+                    <div class="settings-group">
+                        <label class="switch">
+                            <input type="checkbox" id="autoPlay">
+                            <span class="slider"></span>
+                            <span class="label">التشغيل التلقائي</span>
+                        </label>
+                        
+                        <label class="switch">
+                            <input type="checkbox" id="wordHighlight">
+                            <span class="slider"></span>
+                            <span class="label">تظليل الكلمة أثناء التلاوة</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3><i class="fas fa-bell"></i> التذكيرات</h3>
+                    <div class="settings-group">
+                        <label class="switch">
+                            <input type="checkbox" id="dailyReminder">
+                            <span class="slider"></span>
+                            <span class="label">تذكير يومي</span>
+                        </label>
+                        
+                        <div class="setting-item">
+                            <label for="reminderTime">وقت التذكير:</label>
+                            <input type="time" id="reminderTime" value="18:00">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3><i class="fas fa-database"></i> التخزين</h3>
+                    <div class="settings-group">
+                        <button class="btn-secondary" id="clearCache">
+                            <i class="fas fa-trash"></i>
+                            مسح الذاكرة المؤقتة
+                        </button>
+                        <button class="btn-secondary" id="exportData">
+                            <i class="fas fa-download"></i>
+                            تصدير البيانات
+                        </button>
+                        <button class="btn-secondary" id="importData">
+                            <i class="fas fa-upload"></i>
+                            استيراد البيانات
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-primary" id="saveSettings">
+                    حفظ الإعدادات
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Install PWA Prompt -->
+    <div id="installPrompt" class="install-prompt hidden">
+        <div class="prompt-content">
+            <i class="fas fa-mobile-alt"></i>
+            <div class="prompt-text">
+                <h4>تثبيت التطبيق</h4>
+                <p>قم بتثبيت تطبيق القرآن الكريم على جهازك للوصول السريع</p>
+            </div>
+            <button class="btn-primary" id="installBtn">تثبيت</button>
+            <button class="btn-secondary" id="dismissInstall">لاحقاً</button>
+        </div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="script.js" defer></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registered:', registration);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed:', error);
+                });
+        });
+    }
+    </script>
+</body>
+</html>
