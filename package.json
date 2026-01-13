@@ -1,0 +1,32 @@
+{
+  "name": "quran-app",
+  "version": "1.0.0",
+  "description": "تطبيق القرآن الكريم المتكامل",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -c-1 -p 8080",
+    "build": "npm run minify && npm run compress",
+    "minify": "terser script.js -o script.min.js && cleancss -o style.min.css style.css",
+    "compress": "gzip -k -f *.html *.css *.js",
+    "test": "echo \"No tests specified\" && exit 0",
+    "deploy": "npm run build && gh-pages -d ."
+  },
+  "keywords": [
+    "quran",
+    "islam",
+    "arabic",
+    "pwa",
+    "javascript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "terser": "^5.16.1",
+    "clean-css-cli": "^5.6.1",
+    "gh-pages": "^5.0.0"
+  },
+  "dependencies": {
+    "font-awesome": "^4.7.0"
+  }
+}
